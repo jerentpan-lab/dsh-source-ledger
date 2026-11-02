@@ -1,0 +1,5 @@
+# dsh-source-ledger bundle patch: mounts the plugin into a dsh profile.
+# Install: dsh plugin --profile <name> add dsh-source-ledger
+- insert:
+    - id: dsh-source-ledger
+      name: dsh-source-ledger

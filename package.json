@@ -1,0 +1,37 @@
+{
+  "name": "dsh-source-ledger",
+  "version": "0.1.1",
+  "description": "Source-tagged assertion ledger for DeepSeek Harness: every decision-grade claim carries a inspectable source pointer.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src",
+    "cordis.patch.yml",
+    "README.md",
+    "README.zh.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "provenance",
+    "audit",
+    "claims"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jerentpan-lab/dsh-source-ledger.git"
+  }
+}
