@@ -1,5 +1,10 @@
 # dsh-source-ledger
 
+[![npm version](https://img.shields.io/npm/v/dsh-source-ledger)](https://www.npmjs.com/package/dsh-source-ledger) [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
+> Author: jetpan (npm) ↔ jerentpan-lab (GitHub) | [npm package](https://www.npmjs.com/package/dsh-source-ledger) | [GitHub repo](https://github.com/jerentpan-lab/dsh-source-ledger) | install from GitHub: `dsh plugin --profile web add github:jerentpan-lab/dsh-source-ledger`
+
+
 Decision-grade claims must carry an inspectable **source pointer** (url / `file:line` /
 message id). Claims without one are flagged `[no-source]` and cannot be verified.
 `source_audit` reports the source-tag rate and returns a random sample for independent

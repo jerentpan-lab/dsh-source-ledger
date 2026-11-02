@@ -1,5 +1,10 @@
 # dsh-source-ledger（带源断言台账）
 
+[![npm version](https://img.shields.io/npm/v/dsh-source-ledger)](https://www.npmjs.com/package/dsh-source-ledger) [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
+> 作者：jetpan（npm）↔ jerentpan-lab（GitHub）｜[npm 包](https://www.npmjs.com/package/dsh-source-ledger)｜[GitHub 仓库](https://github.com/jerentpan-lab/dsh-source-ledger)｜也可从 GitHub 安装：`dsh plugin --profile web add github:jerentpan-lab/dsh-source-ledger`
+
+
 影响决策的断言必须带**可核查的源指针**（url / `文件:行` / 消息 ID）。没有源的标记为
 `[no-source]`，不能算已核实。`source_audit` 给出带源率并随机抽样供独立复算。
 

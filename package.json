@@ -1,6 +1,6 @@
 {
   "name": "dsh-source-ledger",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Source-tagged assertion ledger for DeepSeek Harness: every decision-grade claim carries a inspectable source pointer.",
   "type": "module",
   "main": "src/index.js",
@@ -32,6 +32,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jerentpan-lab/dsh-source-ledger.git"
+    "url": "git+https://github.com/jerentpan-lab/dsh-source-ledger.git"
+  },
+  "author": {
+    "name": "jetpan (jerentpan-lab)",
+    "email": "jerentpan@gmail.com",
+    "url": "https://github.com/jerentpan-lab"
+  },
+  "homepage": "https://github.com/jerentpan-lab/dsh-source-ledger#readme",
+  "bugs": {
+    "url": "https://github.com/jerentpan-lab/dsh-source-ledger/issues"
   }
 }
