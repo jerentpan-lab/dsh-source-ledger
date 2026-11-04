@@ -26,14 +26,15 @@ dsh plugin --profile web add dsh-source-ledger
 - `source_audit { sampleN? }` — source rate + random sample
 - `source_list { onlyMissingSource? }`
 
-## Config
+## Config (0.2.0)
 
-```yaml
-- id: dsh-source-ledger
-  name: dsh-source-ledger
-  config:
-    ledgerFile: "/absolute/path/ledger.jsonl"
+```json
+{ "ledgerFile": "~/.dsh/source-ledger.jsonl" }
 ```
+
+- `ledgerFile`: append-only ledger path (default `~/.dsh/source-ledger.jsonl`, env `DSH_SOURCE_LEDGER_FILE`).
+- Unknown keys / invalid values throw a readable `ConfigError`.
+- Example: `config.example.json`. Run `npm run verify` for tests + pack checks.
 
 ## License
 

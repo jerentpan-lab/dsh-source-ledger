@@ -8,6 +8,7 @@ import { join } from 'node:path';
 import {
   appendEvent, audit, createEntry, loadEvents, materialize, verifyAppend,
 } from './core.js';
+import { validateConfig } from './config.js';
 
 export const name = 'dsh-source-ledger';
 export const inject = ['tools'];
@@ -21,7 +22,8 @@ try {
   defineTool = (options) => ({ ...options });
 }
 
-export function apply(ctx, config = {}) {
+export function apply(ctx, rawConfig = {}) {
+  const { config } = validateConfig(rawConfig);
   const ledgerFile =
     config.ledgerFile || process.env.DSH_SOURCE_LEDGER_FILE || join(homedir(), '.dsh', 'source-ledger.jsonl');
 
