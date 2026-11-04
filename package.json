@@ -1,6 +1,6 @@
 {
   "name": "dsh-source-ledger",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "Source-tagged assertion ledger for DeepSeek Harness: every decision-grade claim carries a inspectable source pointer.",
   "type": "module",
   "main": "src/index.js",
@@ -13,7 +13,8 @@
     "README.md",
     "README.zh.md",
     "LICENSE",
-    "config.example.json"
+    "config.example.json",
+    "examples"
   ],
   "keywords": [
     "dsh",

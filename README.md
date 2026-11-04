@@ -36,6 +36,35 @@ dsh plugin --profile web add dsh-source-ledger
 - Unknown keys / invalid values throw a readable `ConfigError`.
 - Example: `config.example.json`. Run `npm run verify` for tests + pack checks.
 
+## Demo
+
+```bash
+node examples/demo.mjs
+```
+
+## Bench
+
+`node bench/bench.mjs` writes `bench/RESULTS.md` (this host: 1000 entries+audit p50 ≈ 3.0ms, 10000 ≈ 17.2ms).
+
+## Troubleshooting (error table)
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| `ConfigError ... unknown key` | typo/unsupported config key | use `config.example.json` |
+| `ConfigError ... pointerTypes` | unknown pointer type | allowed: url, file, file-line, message, commit, stdout |
+| `source_assert: claim is required` | empty claim | pass a claim |
+| `verify: entry ... has no inspectable pointer` | weak/none source | assert with a pointer type |
+| `source changed since assert` | file/url content hash differs | re-assert with the new content |
+| `source unreachable` | source file/url missing | restore source or re-assert |
+| `source_verify: id is required` | missing id | pass an entry id |
+| `report` not written | bad outFile path | use an absolute writable path |
+
+## Verify
+
+```bash
+npm run verify
+```
+
 ## License
 
 MIT

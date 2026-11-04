@@ -5,8 +5,10 @@
  */
 import { homedir } from 'node:os';
 import { join } from 'node:path';
+import { writeFile } from 'node:fs/promises';
 import {
-  appendEvent, audit, createEntry, loadEvents, materialize, verifyAppend,
+  appendEvent, audit, createEntry, detectSourceType, loadEvents, materialize,
+  renderAudit, snapshotSource, verifyAppend, verifySnapshot,
 } from './core.js';
 import { validateConfig } from './config.js';
 
@@ -47,17 +49,23 @@ export function apply(ctx, rawConfig = {}) {
     defineTool({
       name: 'source_assert',
       description:
-        'Record a decision-grade claim with an inspectable pointer (url / file / file:line / msg:<id>). Free-text sources are weak and can never be verified; missing sources are flagged.',
+        'Record a decision-grade claim with an inspectable pointer (url / file / file:line / msg:<id> / commit:<sha> / stdout:<ref>). Free-text sources are weak and can never be verified; missing sources are flagged.',
       parameters: {
         claim: { type: 'string', required: true, description: 'The assertion.' },
         source: { type: 'string', description: 'Pointer: https://…, /path/file, /path/file:42, msg:<id>.' },
         owner: { type: 'string', description: 'Who asserts it.' },
         recompute: { type: 'string', description: 'Command to recompute / confirm the claim.' },
+        snapshot: { type: 'boolean', description: 'Snapshot the source content hash (C1; file sources hashed locally, url skipped in offline mode).' },
       },
       output: out,
       async execute(args = {}) {
         if (!args?.claim || !String(args.claim).trim()) throw new Error('source_assert: claim is required');
-        const entry = createEntry(args);
+        const sourceType = detectSourceType(args.source || '');
+        const snapshot = await snapshotSource(String(args.source || ''), sourceType, { snapshot: args.snapshot === true });
+        const entry = createEntry(
+          { ...args, sourceHash: snapshot.status === 'hashed' ? snapshot : null, snapshot },
+          { pointerTypes: config.pointerTypes || undefined }
+        );
         await appendEvent(ledgerFile, entry);
         return entry;
       },
@@ -76,10 +84,18 @@ export function apply(ctx, rawConfig = {}) {
       async execute(args = {}) {
         if (!args?.id) throw new Error('source_verify: id is required');
         const { events } = await loadWithWarnings();
+        const entryBefore = materialize(events).find((e) => e.id === args.id);
+        const snapshotCheck = await verifySnapshot(entryBefore);
+        if (snapshotCheck.status === 'changed') {
+          throw new Error(`source_verify: source changed since assert (sha256 ${snapshotCheck.before} -> ${snapshotCheck.after}); refusing to verify`);
+        }
+        if (snapshotCheck.status === 'unreachable') {
+          throw new Error(`source_verify: source unreachable (${snapshotCheck.reason}); refusing to verify`);
+        }
         const verifyEvent = verifyAppend(events, args.id, { note: args.note });
         await appendEvent(ledgerFile, verifyEvent);
         const entry = materialize([...events, verifyEvent]).find((e) => e.id === args.id);
-        return entry;
+        return { ...entry, snapshot_check: snapshotCheck };
       },
     })
   );
@@ -92,12 +108,23 @@ export function apply(ctx, rawConfig = {}) {
       parameters: {
         sampleN: { type: 'number', description: 'How many entries to sample (default 3).' },
         seed: { type: 'number', description: 'Deterministic sampling seed (optional).' },
+        format: { type: 'string', description: 'Export report format: markdown or json (C2).' },
+        outFile: { type: 'string', description: 'Optional path to write the exported report (C2).' },
       },
       output: out,
       async execute(args = {}) {
         const { events, corrupted } = await loadWithWarnings();
         const result = audit(events, { sampleN: args.sampleN ?? 3, seed: args.seed });
-        return { ledgerFile, ...result, corrupted };
+        const payload = { ledgerFile, ...result, corrupted };
+        if (args.format || args.outFile) {
+          const format = args.format === 'json' ? 'json' : 'markdown';
+          const report = renderAudit(result, format);
+          if (args.outFile) await writeFile(String(args.outFile), report, 'utf8');
+          payload.reportFormat = format;
+          payload.report = report;
+          if (args.outFile) payload.reportFile = String(args.outFile);
+        }
+        return payload;
       },
     })
   );
@@ -119,5 +146,5 @@ export function apply(ctx, rawConfig = {}) {
     })
   );
 
-  return { ledgerFile };
+  return { ledgerFile, pointerTypes: config.pointerTypes || null };
 }
